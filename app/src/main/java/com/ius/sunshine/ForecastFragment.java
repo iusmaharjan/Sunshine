@@ -27,10 +27,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ForecastFragment extends Fragment {
+
+    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -62,15 +63,10 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] forecastArray = {
-                "Today - Sunny - 88/63",
-                "Tomorrow - Cloudy - 88/43",
-                "Sat - Rain - 77/34"
-        };
+        List<String> weekForecast;
+        weekForecast = new ArrayList<>();
 
-        List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
-
-        ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<String>(
+        mForecastAdapter = new ArrayAdapter<>(
                 //Context
                 getActivity(),
                 //id of list item layout
@@ -109,8 +105,7 @@ public class ForecastFragment extends Fragment {
             long roundedHigh = Math.round(high);
             long roundedLow = Math.round(low);
 
-            String highLowStr = roundedHigh + "/" + roundedLow;
-            return highLowStr;
+            return roundedHigh + "/" + roundedLow;
         }
 
         /**
@@ -183,9 +178,6 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
             return resultStrs;
 
         }
@@ -216,8 +208,6 @@ public class ForecastFragment extends Fragment {
 
                 URL url = new URL(builtUri.toString());
 
-                Log.v(LOG_TAG, "Built URI : " + builtUri.toString());
-
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -225,7 +215,7 @@ public class ForecastFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     // Nothing to do.
                     return null;
@@ -237,7 +227,7 @@ public class ForecastFragment extends Fragment {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                     // But it does make debugging a *lot* easier if you print out the completed
                     // buffer for debugging.
-                    buffer.append(line + "\n");
+                    buffer.append(line).append("\n");
                 }
 
                 if (buffer.length() == 0) {
@@ -270,6 +260,16 @@ public class ForecastFragment extends Fragment {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if(result != null) {
+                mForecastAdapter.clear();
+                for(String dayForecastStr : result) {
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
         }
     }
 }
