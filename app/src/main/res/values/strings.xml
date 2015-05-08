@@ -12,11 +12,21 @@
 
     <!--Preference labels-->
     <string name="pref_location_label">Location</string>
+    <string name="pref_units_label">Temperature Units</string>
 
     <!--Key Values-->
     <string name="pref_location_key">location</string>
+    <string name="pref_units_key">units</string>
 
     <!--Default Values-->
     <string name="pref_location_default">94043</string>
+
+    <!--Units values -->
+    <string name="pref_units_metric">metric</string>
+    <string name="pref_units_imperial">imperial</string>
+
+    <!--Units values -->
+    <string name="pref_units_label_metric">Metric</string>
+    <string name="pref_units_label_imperial">Imperial</string>
 
 </resources>
